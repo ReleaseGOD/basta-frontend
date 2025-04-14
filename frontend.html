@@ -10,7 +10,7 @@
       padding: 0;
       box-sizing: border-box;
     }
-  
+
     html, body {
       font-family: 'Arial', sans-serif;
       background-color: #ffffff;
@@ -20,7 +20,7 @@
       height: 100vh;
       margin: 0;
     }
-  
+
     .container {
       text-align: center;
       width: 90%;
@@ -33,51 +33,51 @@
       flex-direction: column;
       align-items: center;
     }
-  
+
     h1 {
       font-size: 2rem;
       margin-bottom: 20px;
       color: #ff4500;
     }
-  
+
     button {
-  font-size: 2rem;
-  padding: 40px;
-  width: 150px;
-  height: 150px;
-  border: none;
-  background: radial-gradient(circle at top left, #ff4d4d, #cc0000);
-  color: white;
-  border-radius: 50%; /* Botón circular */
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Profundidad */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-weight: bold;
-}
+      font-size: 2rem;
+      padding: 40px;
+      width: 150px;
+      height: 150px;
+      border: none;
+      background: radial-gradient(circle at top left, #ff4d4d, #cc0000);
+      color: white;
+      border-radius: 50%; /* Botón circular */
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Profundidad */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-weight: bold;
+    }
 
-button:hover {
-  background: radial-gradient(circle at top left, #ff3333, #990000);
-  transform: scale(1.05);
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
-}
+    button:hover {
+      background: radial-gradient(circle at top left, #ff3333, #990000);
+      transform: scale(1.05);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+    }
 
-button:active {
-  transform: scale(0.95);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background: radial-gradient(circle at top left, #e60000, #800000);
-}
-  
+    button:active {
+      transform: scale(0.95);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      background: radial-gradient(circle at top left, #e60000, #800000);
+    }
+
     .mensaje {
       margin-top: 20px;
       font-size: 1.2rem;
       color: #2e2e2e;
       font-weight: bold;
     }
-  
+
     .temporizador {
       margin-top: 30px;
       font-size: 2.5rem;
@@ -85,35 +85,35 @@ button:active {
       font-weight: bold;
       letter-spacing: 3px;
     }
-  
+
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
-  
+
     .pulse {
       animation: pulse 1s ease-in-out infinite;
     }
-  
+
     audio {
       display: none;
     }
-  
+
     /* Responsive extra para móviles verticales pequeños */
     @media (max-height: 500px) {
       .container {
         padding: 20px 10px;
       }
-  
+
       h1 {
         font-size: 1.5rem;
       }
-  
+
       .temporizador {
         font-size: 2rem;
       }
-  
+
       button {
         font-size: 1.4rem;
       }
@@ -128,12 +128,10 @@ button:active {
     <div class="temporizador" id="temporizador">10</div>
 
     <!-- Audios -->
-    <audio id="bastaSound" src="basta.mp3" preload="auto"></audio>
-    <audio id="tictacSound" src="tictac.mp3" preload="auto" loop></audio>
-    <audio id="apuroSound" src="apuro.mp3" preload="auto" loop></audio>
-    <audio id="lamentoSound" src="lamento.mp3" preload="auto"></audio>
-
-
+    <audio id="bastaSound" src="basta.mp3" preload="auto" muted></audio>
+    <audio id="tictacSound" src="tictac.mp3" preload="auto" loop muted></audio>
+    <audio id="apuroSound" src="apuro.mp3" preload="auto" loop muted></audio>
+    <audio id="lamentoSound" src="lamento.mp3" preload="auto" muted></audio>
   </div>
 
   <script>
@@ -146,7 +144,6 @@ button:active {
     const apuroSound = document.getElementById("apuroSound");
     const lamentoSound = document.getElementById("lamentoSound");
 
-
     let countdown;
     let tiempo = 10;
 
@@ -154,63 +151,69 @@ button:active {
     mensaje.textContent = "¡BASTA!";
 
     function iniciarCronometro() {
-  clearInterval(countdown);
-  tiempo = 10;
-  temporizador.textContent = tiempo;
-
-  // Reiniciar y reproducir tic-tac lento
-  tictacSound.currentTime = 0;
-  tictacSound.play();
-
-  apuroSound.pause();
-  apuroSound.currentTime = 0;
-
-  countdown = setInterval(() => {
-    tiempo--;
-    temporizador.textContent = tiempo;
-
-    // Cambiar a tic-tac rápido en los últimos 3 segundos
-    if (tiempo === 3) {
-      tictacSound.pause();
-      tictacSound.currentTime = 0;
-      apuroSound.currentTime = 0;
-      apuroSound.play();
-    }
-
-    if (tiempo <= 0) {
       clearInterval(countdown);
-      tictacSound.pause();
-      apuroSound.pause();
+      tiempo = 10;
+      temporizador.textContent = tiempo;
+
+      // Reiniciar y reproducir tic-tac lento
       tictacSound.currentTime = 0;
+      tictacSound.play();
+
+      apuroSound.pause();
       apuroSound.currentTime = 0;
-      // Reproducir lamento
-      lamentoSound.currentTime = 0;
-      lamentoSound.play();
-      temporizador.textContent = "⏰ ¡Tiempo!";
+
+      countdown = setInterval(() => {
+        tiempo--;
+        temporizador.textContent = tiempo;
+
+        // Cambiar a tic-tac rápido en los últimos 3 segundos
+        if (tiempo === 3) {
+          tictacSound.pause();
+          tictacSound.currentTime = 0;
+          apuroSound.currentTime = 0;
+          apuroSound.play();
+        }
+
+        if (tiempo <= 0) {
+          clearInterval(countdown);
+          tictacSound.pause();
+          apuroSound.pause();
+          tictacSound.currentTime = 0;
+          apuroSound.currentTime = 0;
+          // Reproducir lamento
+          lamentoSound.currentTime = 0;
+          lamentoSound.play();
+          temporizador.textContent = "⏰ ¡Tiempo!";
+        }
+      }, 1000);
     }
-  }, 1000);
-}
 
-boton.addEventListener("click", async () => {
-  try {
-    // ✅ Vibración
-    if (navigator.vibrate) {
-      navigator.vibrate(100); // Vibra 100ms
-    }
+    boton.addEventListener("click", async () => {
+      try {
+        // ✅ Vibración
+        if (navigator.vibrate) {
+          navigator.vibrate(100); // Vibra 100ms
+        }
 
-    const res = await fetch("https://basta-api-production.up.railway.app/basta");
-    const data = await res.json();
-    
-    mensaje.textContent = "¡BASTA!";
+        // Reproducir sonido de basta
+        bastaSound.currentTime = 0;
+        bastaSound.play();
 
-    bastaSound.currentTime = 0;
-    bastaSound.play();
+        // Desactivar el mute en los audios después de la interacción del usuario
+        bastaSound.muted = false;
+        tictacSound.muted = false;
+        apuroSound.muted = false;
+        lamentoSound.muted = false;
 
-    iniciarCronometro();
-  } catch (error) {
-    mensaje.textContent = "No se pudo conectar con la API 😢";
-  }
-});
+        const res = await fetch("https://basta-api-production.up.railway.app/basta");
+        const data = await res.json();
+        
+        mensaje.textContent = "¡BASTA!";
+        iniciarCronometro();
+      } catch (error) {
+        mensaje.textContent = "No se pudo conectar con la API 😢";
+      }
+    });
   </script>
 </body>
 </html>
