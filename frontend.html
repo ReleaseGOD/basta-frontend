@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡BASTA! Cronómetro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  
+    html, body {
+      font-family: 'Arial', sans-serif;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+  
+    .container {
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #ff4500;
+    }
+  
+    button {
+  font-size: 2rem;
+  padding: 40px;
+  width: 150px;
+  height: 150px;
+  border: none;
+  background: radial-gradient(circle at top left, #ff4d4d, #cc0000);
+  color: white;
+  border-radius: 50%; /* Botón circular */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Profundidad */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+}
+
+button:hover {
+  background: radial-gradient(circle at top left, #ff3333, #990000);
+  transform: scale(1.05);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: radial-gradient(circle at top left, #e60000, #800000);
+}
+  
+    .mensaje {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #2e2e2e;
+      font-weight: bold;
+    }
+  
+    .temporizador {
+      margin-top: 30px;
+      font-size: 2.5rem;
+      color: #ff4500;
+      font-weight: bold;
+      letter-spacing: 3px;
+    }
+  
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  
+    .pulse {
+      animation: pulse 1s ease-in-out infinite;
+    }
+  
+    audio {
+      display: none;
+    }
+  
+    /* Responsive extra para móviles verticales pequeños */
+    @media (max-height: 500px) {
+      .container {
+        padding: 20px 10px;
+      }
+  
+      h1 {
+        font-size: 1.5rem;
+      }
+  
+      .temporizador {
+        font-size: 2rem;
+      }
+  
+      button {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>¡Es hora de jugar ¡BASTA!</h1>
+    <button id="bastaBtn" class="pulse">¡BASTA!</button>
+    <div class="mensaje" id="mensaje"></div>
+    <div class="temporizador" id="temporizador">10</div>
+
+    <!-- Audios -->
+    <audio id="bastaSound" src="basta.mp3" preload="auto"></audio>
+    <audio id="tictacSound" src="tictac.mp3" preload="auto" loop></audio>
+    <audio id="apuroSound" src="apuro.mp3" preload="auto" loop></audio>
+    <audio id="lamentoSound" src="lamento.mp3" preload="auto"></audio>
+
+
+  </div>
+
+  <script>
+    const boton = document.getElementById("bastaBtn");
+    const mensaje = document.getElementById("mensaje");
+    const temporizador = document.getElementById("temporizador");
+
+    const bastaSound = document.getElementById("bastaSound");
+    const tictacSound = document.getElementById("tictacSound");
+    const apuroSound = document.getElementById("apuroSound");
+    const lamentoSound = document.getElementById("lamentoSound");
+
+
+    let countdown;
+    let tiempo = 10;
+
+    // Limpiar mensaje al cargar la página
+    mensaje.textContent = "¡BASTA!";
+
+    function iniciarCronometro() {
+  clearInterval(countdown);
+  tiempo = 10;
+  temporizador.textContent = tiempo;
+
+  // Reiniciar y reproducir tic-tac lento
+  tictacSound.currentTime = 0;
+  tictacSound.play();
+
+  apuroSound.pause();
+  apuroSound.currentTime = 0;
+
+  countdown = setInterval(() => {
+    tiempo--;
+    temporizador.textContent = tiempo;
+
+    // Cambiar a tic-tac rápido en los últimos 3 segundos
+    if (tiempo === 3) {
+      tictacSound.pause();
+      tictacSound.currentTime = 0;
+      apuroSound.currentTime = 0;
+      apuroSound.play();
+    }
+
+    if (tiempo <= 0) {
+      clearInterval(countdown);
+      tictacSound.pause();
+      apuroSound.pause();
+      tictacSound.currentTime = 0;
+      apuroSound.currentTime = 0;
+      // Reproducir lamento
+      lamentoSound.currentTime = 0;
+      lamentoSound.play();
+      temporizador.textContent = "⏰ ¡Tiempo!";
+    }
+  }, 1000);
+}
+
+boton.addEventListener("click", async () => {
+  try {
+    // ✅ Vibración
+    if (navigator.vibrate) {
+      navigator.vibrate(100); // Vibra 100ms
+    }
+
+    const res = await fetch("http://127.0.0.1:8000/basta");
+    const data = await res.json();
+    
+    mensaje.textContent = "¡BASTA!";
+
+    bastaSound.currentTime = 0;
+    bastaSound.play();
+
+    iniciarCronometro();
+  } catch (error) {
+    mensaje.textContent = "No se pudo conectar con la API 😢";
+  }
+});
+  </script>
+</body>
+</html>
